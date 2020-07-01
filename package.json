@@ -2,7 +2,7 @@
   "name": "hydreminder",
   "version": "1.0.0",
   "description": "Telegram bot to remind you to get hydrated",
-  "main": "build/index.js",
+  "main": "build/main.js",
   "repository": "git@github.com:kitce/hydreminder.git",
   "author": "kitce <kitce.dev@gmail.com>",
   "license": "MIT",

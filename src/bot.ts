@@ -1,16 +1,24 @@
 import config from './config/config';
 import debugFactory from 'debug';
+import shuffle from 'lodash/shuffle';
 import { Telegraf, Middleware, Context as TelegrafContext } from 'telegraf';
 import { getChats, joinChat, leaveChat } from './helpers/chat.helper';
+import { getPosts } from './helpers/instrgram.helper';
 
-const debug = debugFactory('hydreminder:bot');
+const debug = debugFactory('instatele:bot');
 
 const bot = new Telegraf(config.botToken);
 
-const say = async (id: string | number) => {
-  debug('say', id);
+export const fetching = getPosts(config.instagramUsername);
+
+const greet = async (id: string | number) => {
+  debug('greet', id);
   try {
-    await bot.telegram.sendAnimation(id, config.files.animation);
+    const posts = await fetching;
+    const post = shuffle(posts)[0];
+    if (post) {
+      await bot.telegram.sendMessage(id, post.url);
+    }
   } catch (err) {
     debug('caught', err);
   }
@@ -20,7 +28,7 @@ export const broadcast = async () => {
   debug('broadcast');
   const chats = await getChats();
   for (const id of chats) {
-    say(id);
+    greet(id);
   }
 };
 
@@ -29,19 +37,37 @@ const start: Middleware<TelegrafContext> = async (context) => {
   if (chat) {
     debug('start', chat.id);
     await joinChat(chat.id);
-    await say(chat.id);
+    await greet(chat.id);
   }
 };
 
-bot.start(start);
-
-bot.command('drink', async (context) => {
+const stop: Middleware<TelegrafContext> = async (context) => {
   const { chat } = context;
   if (chat) {
-    await say(chat.id);
+    debug('stop', chat.id);
+    await leaveChat(chat.id);
   }
-});
+};
 
+const hi: Middleware<TelegrafContext> = async (context) => {
+  const { chat } = context;
+  if (chat) {
+    await greet(chat.id);
+  }
+};
+
+/**
+ * Commands
+ */
+bot.command('start', start);
+
+bot.command('stop', stop);
+
+bot.command('hi', hi);
+
+/**
+ * Events
+ */
 bot.on('new_chat_members', (context, next) => {
   const { update } = context;
   const { message } = update;
@@ -53,14 +79,13 @@ bot.on('new_chat_members', (context, next) => {
   }
 });
 
-bot.on('left_chat_member', (context) => {
+bot.on('left_chat_member', (context, next) => {
   const { chat, update } = context;
   const { message } = update;
   const { left_chat_member: user } = message!;
   const { username } = user!;
   if (chat && (username === bot.options.username)) {
-    debug('leave group', chat.id);
-    return leaveChat(chat.id);
+    return stop(context, next);
   }
 });
 

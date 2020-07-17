@@ -1,2 +1,2 @@
-# Hydreminder
-Telegram bot to remind you to get hydrated
+# Instatele
+Telegram bot to send random Instagram post

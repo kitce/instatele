@@ -7,11 +7,19 @@ const cwd = process.cwd();
 
 const config = {
   botToken: process.env.BOT_TOKEN!,
-  schedule: process.env.SCHEDULE!,
+  instagramUsername: process.env.INSTAGRAM_USERNAME!,
+  schedule: process.env.SCHEDULE,
   files: {
-    chats: path.join(cwd, './data/chats.json'),
-    animation: 'CgACAgUAAxkBAAMkXvyxa_CJsXDEvgQQ9Ocu7DhC3XcAAmAAAz0gSVTr_KfcRf5OkBoE'
+    chats: path.join(cwd, './data/chats.json')
   }
 };
+
+if (!config.botToken) {
+  throw new Error('Missing Telegram bot token');
+}
+
+if (!config.instagramUsername) {
+  throw new Error('Missing Instgram username');
+}
 
 export default config;

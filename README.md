@@ -47,6 +47,7 @@ $ yarn start
 | `BOT_TOKEN`* | Telegram bot token ([@BotFather](https://t.me/BotFather)) |
 | `INSTAGRAM_USERNAME`* | Instagram username |
 | `SCHEDULE` | [Cron](https://en.wikipedia.org/wiki/Cron) job schedule |
+
 *Required
 
 ## License

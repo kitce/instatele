@@ -30,7 +30,7 @@
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
     "instagram-posts": "^2.2.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "telegraf": "^3.38.0"
   }
 }
